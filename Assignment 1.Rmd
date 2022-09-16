@@ -1,0 +1,32 @@
+---
+title: "Assignment 1"
+author: "Jennifer Rutledge"
+date: "2022-09-16"
+output: html_document
+data source: "https://ourworldindata.org/child-mortality"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+teams<-read.csv("child_deaths_data.csv")
+View(teams)
+sd(teams$Number.of.under.five.deaths)
+max(teams$Number.of.under.five.deaths)
+teams[10555,]
+
+```
+
+```{r teams, echo=FALSE}
+plot(x = teams$Year,
+     y = teams$Number.of.under.five.deaths,
+     xlab = "Year",
+     ylab = "Number of deaths of children under five",
+     main = "Year vs Number of deaths")
+```
+
+
+
