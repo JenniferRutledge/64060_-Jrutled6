@@ -1,0 +1,36 @@
+---
+title: "Assignment 2"
+author: "Jennifer Rutledge"
+date: "2022-10-09"
+output: html_document
+---
+
+```{r}
+
+teams<-read.csv("UniversalBank.csv", header = TRUE)
+
+library(caret)
+library(ISLR)
+norm_model<-preProcess(Default, method =c('range'))
+Default_normalized<-predict(norm_model,Default)
+
+teams_with_dummy_var<-dummyVars(~ID,~ZIP.Code, data = teams)
+
+set.seed(123)
+model<-train(teams~ID+ZIP.Code, data=teams_with_dummy_var, method="knn", tuneGrid=search_grid, preProcess='range')
+model
+
+q<-class2ind(as.factor(teams_with_dummy_var))
+colnames(q)<-c('Edu1','Edu2','Edu3','Personal.Loan1','Personal.Loan2')
+
+
+Default_normalized<-Default_normalized[,-2]
+
+Index_Train<-createDataPartition(Default_normalized$default, p=0.8, list=FALSE)
+Train<-Default_normalized[Index_Train,]
+Test<-Default_normalized[-Index_Train,]
+
+
+
+
+```
