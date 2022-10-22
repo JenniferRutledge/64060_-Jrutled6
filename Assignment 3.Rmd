@@ -1,0 +1,107 @@
+---
+title: "Assignment 3"
+author: "Jennifer Rutledge"
+date: "2022-10-22"
+output: html_document
+---
+```{r}
+
+library("caret")
+library("dplyr")
+library("tidyr")
+library("reshape2")
+library("e1071")
+
+
+assignment3<-read.csv("C:/Users/jenru/OneDrive/Documents/UniversalBank.csv")
+          
+assignment3$Personal.Loan <- as.factor(assignment3$Personal.Loan)
+assignment3$Online <- as.factor(assignment3$Online)
+assignment3$CreditCard <- as.factor(assignment3$CreditCard)        
+
+set.seed(123)
+
+Train_data_index = createDataPartition(assignment3$Personal.Loan, p=.6, list = F) 
+Train_data_df = assignment3[Train_data_index,]
+Validation_data_df = assignment3[-Train_data_index,]
+
+#StepA
+
+assignment3_melt=melt(Train_data_df,id=c("CreditCard","Personal.Loan"),variable="Online")
+assignment3_dcast=dcast(assignment3_melt,CreditCard+Personal.Loan~Online)
+assignment3_dcast[,c(1:2,14)]
+
+
+
+
+#StepB
+
+#The probability of loan acceptance is: 93 / 3000 = 3.1%
+
+
+
+
+#StepC
+
+p_loan_assignment3_melt = melt(Train_data_df, id=c("Personal.Loan"), variable="Online")
+cc_assignment3_melt = melt(Train_data_df, id=c("CreditCard"), variable="Online")
+assignment3_dcast_p_loan = dcast(p_loan_assignment3_melt, Personal.Loan~Online)
+assignment3_dcast_cc = dcast(cc_assignment3_melt, CreditCard~Online)
+
+assignment3_dcast_p_loan[,c(1,13)]
+assignment3_dcast_cc[,c(1,14)]
+
+
+
+
+#StepD
+#Compute the following quantities [P(A | B) means “the probability of A given B”]: 
+
+#i.
+#P(CC = 1 given Loan = 1)
+# 84/(84+204) = 29%
+table(Train_data_df[,c(14,10)])
+
+#ii.
+#P(Online = 1 given Loan = 1)
+# 177/(177+84) = 67%
+table(Train_data_df[13,10])
+
+#iii.
+#P(Loan = 1)
+# 288/(288+2712) = 9%
+table(Train_data_df[c(10)])
+
+#iv.
+#P(CC = 1 given Loan = 0)
+# 777/(777+1935) = 29%
+
+#v.
+#P(Online = 1 given Loan = 0)
+# 1631/(1631+1081) = 
+
+#vi.
+#P(Loan = 0)
+# 2712/(2712+288) = 90%
+
+
+
+
+#StepE
+
+#Calculation: ((84/(84+204))*(177/(177+84))*(288/(288+2712))*(777/(777+1935))*(1631/(1631+1081))*(2712/(2712+288)) = .00295770482
+
+
+#StepF
+
+# .003 which is the same as in answer in Step E
+#It is the independent variable that is required for this prediction. We do not need independent variables from the Naive Bayes.
+
+
+#StepG
+
+train_naive_bayes = Train_data_df[,c(10,13:14)]
+naive_bayes = naiveBayes(Personal.Loan~., data=train_naive_bayes)
+naive_bayes
+```
+
