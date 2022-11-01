@@ -1,0 +1,151 @@
+---
+title: "Assignment 4"
+author: "Jennifer Rutledge"
+date: "2022-10-31"
+output: html_document
+---
+
+```{r}
+
+library(readr)
+library(dplyr)
+library(caret)
+library(factoextra)
+library(tidyverse)
+library(cluster)
+
+assignment4<-read.csv("C:/Users/jenru/OneDrive/Documents/Pharmaceuticals.csv")
+
+head(assignment4)
+colSums(is.na(assignment4))
+
+df_numerical<-assignment4[,c(3:11)]
+
+normalization_df<-as.data.frame(scale(df_numerical))
+distance<-get_dist(df)
+fviz_dist(distance)
+
+
+df<-scale(df_numerical)
+fviz_nbclust(df_numerical, FUNcluster = kmeans, method="wss") + labs(substitle = "Elbow Method")
+
+fviz_nbclust(df_numerical, FUNcluster = kmeans, method="silhouette")
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r}
+
+set.seed(12335)
+
+clustering<-kmeans(df_numerical, centers=5, nstart=25)
+clustering$centers
+
+clustering$size
+clustering$cluster[120]
+
+fviz_cluster(clustering, data=df)
+
+fviz_dist(distance)
+```
+```{r}
+
+data_fitting <- kmeans(df_numerical, 9)
+aggregate(df_numerical, by = list(data_fitting$cluster), FUN = mean)
+norm_data <- as.data.frame(df_numerical, data_fitting$cluster)
+norm_data
+
+```
+
+```{r}
+clusplot(assignment4, data_fitting$cluster, color = TRUE, shade=TRUE, labels = 2, lines=0)
+```
+```{r}
+#b)Interpret the clusters with respect to the numerical variables used in forming the clusters.
+
+#cluster 1: 11, 15
+#cluster 2: 17,13
+#cluster 3: 4, 5, 7, 10, 16, 19, 21
+#cluster 4: 3, 6, 8, 9, 12, 14, 20
+#cluster 5: 2, 18
+```
+
+
+
+```{r}
+#Is there a pattern in the clusters with respect to the numerical variables (10 to 12)? (those not used in forming the clusters) 
+
+#cluster 1: 11, 15
+#cluster 2: 17,13
+#cluster 3: 4, 5, 7, 10, 16, 19, 21
+#cluster 4: 3, 6, 8, 9, 12, 14, 20
+#cluster 5: 2, 18
+
+assignment4<-read.csv("C:/Users/jenru/OneDrive/Documents/Pharmaceuticals.csv")
+
+head(assignment4)
+colSums(is.na(assignment4))
+
+df_numerical_c<-assignment4[,c(3:11)]
+
+normalization_df<-as.data.frame(scale(df_numerical_c))
+distance<-get_dist(df)
+fviz_dist(distance)
+
+
+df<-scale(df_numerical_c)
+fviz_nbclust(df_numerical_c, FUNcluster = kmeans, method="wss") + labs(substitle = "Elbow Method")
+
+fviz_nbclust(df_numerical_c, FUNcluster = kmeans, method="silhouette")
+
+
+set.seed(12335)
+
+clustering<-kmeans(df_numerical_c, centers=5, nstart=25)
+clustering$centers
+
+clustering$size
+clustering$cluster[120]
+
+fviz_cluster(clustering, data=df)
+
+fviz_dist(distance)
+
+data_fitting <- kmeans(df_numerical_c, 12)
+aggregate(df_numerical_c, by = list(data_fitting$cluster), FUN = mean)
+norm_data <- as.data.frame(df_numerical_c, data_fitting$cluster)
+norm_data
+
+clusplot(assignment4, data_fitting$cluster, color = TRUE, shade=TRUE, labels = 2, lines=0)
+
+#Cluster 1 [1,4]: Second highest for Asset_Turnover
+#cluster 2 [9, 14, 20]: Smallest Asset_Turnover
+#cluster 3 [3, 5]: PE_Ratio Second highest???
+#cluster 4 [13, 17]: Highest Market_Cap, Rev_Growth not indicated
+#cluster 5 [8]: N/A
+#cluster 6 [10]:N/A
+#cluster 7 [11, 15]: highest ROE, highest Asset_Turnover
+#cluster 8 [2]: N/A
+#cluster 9 [16]: N/A
+#cluster 10 [5, 12]: N/A
+#cluster 11 [7, 6]: N/A
+#cluster 12 [13]: N/A
+
+
+```
+
+```{r}
+
+#Provide an appropriate name for each cluster using any or all of the variables in the dataset.
+
+#Cluster 1 [1,4]: Second_highest_Asset_Turnover
+#cluster 2 [9, 14, 20]: Smallest_Asset_Turnover
+#cluster 3 [3, 5]: PE_Ratio_Second_Highest
+#cluster 4 [13, 17]: Highest_Market_Cap
+#cluster 5 [8]: Clust5_On_Hold
+#cluster 6 [10]: Clust6_On_Hold
+#cluster 7 [11, 15]: Highest_ROE_and_Asset_Turnover
+
+```
+
