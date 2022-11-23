@@ -1,0 +1,107 @@
+---
+title: "Assignment 5"
+author: "Jennifer Rutledge"
+date: "2022-11-23"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r}
+library(factoextra)
+library(dendextend)
+library(cluster)
+library(tidyverse)
+library(knitr)
+```
+
+
+
+```{r}
+cereals<- read.csv('C:/Users/jenru/OneDrive/Documents/Cereals.csv')
+numericaldata = data.frame(cereals[,4:16])
+
+
+OmitMissing = na.omit(numericaldata)
+Normalise = scale(OmitMissing)
+distance = dist(Normalise, method = "euclidian")
+clustering_heirarchial = hclust(distance,method = "complete")
+plot(clustering_heirarchial)
+round(clustering_heirarchial$height, 3)
+
+
+plot(clustering_heirarchial)
+rect.hclust(clustering_heirarchial,k = 4, border = "blue")
+
+
+```
+
+```{r}
+singleClustering = agnes(Normalise, method = "single")
+completeClustering = agnes(Normalise, method = "complete")
+averageClustering = agnes(Normalise, method = "average")
+wardClustering = agnes(Normalise, method = "ward")
+
+print(singleClustering$ac)
+print(completeClustering$ac)
+print(averageClustering$ac)
+print(wardClustering$ac)
+pltree(wardClustering, cex = 0.6, hang = -1, main = "Dendrogram of Agnes")
+
+
+```
+
+```{r}
+#Per the values above, Wards method is the best since the value is: 0.9046042
+```
+
+```{r}
+HierarchialClustering1 <- hclust(distance, method = "ward.D2" )
+subgrp <- cutree(HierarchialClustering1, k = 4)
+table(subgrp)
+cereals <- as.data.frame(cbind(Normalise,subgrp))
+```
+```{r}
+#Visualizing the results on a scatterplot:
+
+fviz_cluster(list(data = Normalise, cluster = subgrp))
+
+```
+
+```{r}
+Newcereals = numericaldata
+Newcereals_omit = na.omit(Newcereals)
+Clust = cbind(Newcereals_omit, subgrp)
+Clust[Clust$subgrp==1,]
+```
+
+```{r}
+Clust[Clust$subgrp==2,]
+
+```
+
+```{r}
+Clust[Clust$subgrp==3,]
+```
+
+
+```{r}
+Clust[Clust$subgrp==4,]
+
+```
+
+
+
+```{r}
+#Calculating mean rating in order for cluster of healthy cereals
+
+mean(Clust[Clust$subgrp==1,"rating"])
+mean(Clust[Clust$subgrp==2,"rating"])
+mean(Clust[Clust$subgrp==3,"rating"])
+mean(Clust[Clust$subgrp==4,"rating"])
+```
+
+```{r}
+#As we see through calculating the mean rating, subgroup 1 has the highest. It is recommended to choose subgroup1 as a healthy  cluster
+```
+
