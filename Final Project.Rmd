@@ -1,0 +1,79 @@
+---
+title: "Sanitation"
+author: "Jennifer Rutledge"
+date: "2022-12-8"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r}
+library(factoextra)
+library(dendextend)
+library(cluster)
+library(tidyverse)
+library(knitr)
+```
+
+
+```{r}
+WithoutSanitation<-
+read.csv("C:/Users/jenru/OneDrive/Documents/Without_Sanitation_2019.csv", header = TRUE,sep =",", stringsAsFactors = FALSE)
+WithoutSanitation = type.convert(WithoutSanitation, as.is = TRUE)
+
+
+df<- WithoutSanitation
+
+d<-dist(df,method="euclidean")
+
+hc1<-hclust(d, method="complete")
+
+plot(hc1, cex=0.6, hang=-4, main="Dendrogram of Population Without Sanitation")
+
+
+
+hc_single<-agnes(df, method = "single")
+hc_complete<- agnes(df, method = "complete")
+hc_average<- agnes(df, method = "average")
+
+print(hc_single$ac)
+
+print(hc_complete$ac)
+
+print(hc_average$ac)
+
+pltree(hc_complete, cex = 0.6, hang=-4, main="Dendrogram of Population Without Sanitation")
+
+
+df<-WithoutSanitation
+numericaldata = data.frame(WithoutSanitation[,1:2])
+
+
+df2<-WithoutSanitation
+
+
+d<-dist(df,method="euclidean")
+
+hc1<-hclust(d, method="complete")
+
+plot(hc1, cex=0.6, hang=-4, main="Dendrogram of Population Without Sanitation")
+
+
+df2<- WithoutSanitation
+
+hc_single<-agnes(df2, method = "single")
+hc_average<- agnes(df2, method = "average")
+hc_complete <- agnes(df2, method = "complete")
+
+print(hc_single$ac)
+
+print(hc_complete$ac)
+
+print(hc_average$ac)
+
+pltree(hc_complete, cex = 0.6, hang=-4, main="Dendrogram of Population without Sanitation")
+
+
+```
+
+
